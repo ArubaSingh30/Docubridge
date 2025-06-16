@@ -4,10 +4,30 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" sizes="192x192" href="/path/to/icon.png">
 </head>
 <body>
-  <h1>You did it!!</h1>
+  <section>
+    <h1>You uploaded everything successfully!</h1>
+  </section>
   <p>File “{{ filename }}” uploaded successfully. </p>
   <p>Question: {{ question }}</p>
+  <h2>Preview of your data</h2>
+  <div>
+    {{ table_html | safe }}
+  </div>
+  <h2>Workbook details</h2>
+  <p><strong>Sheets:</strong></p>
+  <ul>
+    {% for name in sheets %}
+      <li>{{ name }}</li>
+    {% endfor %}
+  </ul>
+
+  <!-- <h2>Simple statistic</h2>
+   <p>Sum of column 2: <strong>{{ col2_sum }}</strong></p>
+  <br>
+  <br> -->
+  <a href = "/">Another One</a>
 </body>
 </html>
