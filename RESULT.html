@@ -16,6 +16,16 @@
   <div>
     {{ table_html | safe }}
   </div>
+  <h2>AI’s Answer</h2>
+  {% if ai_answer %}
+    <div class="card" style="margin-bottom:1em;">
+      <div class="card-body">
+        <p>{{ ai_answer }}</p>
+      </div>
+    </div>
+  {% else %}
+    <p><em>No answer generated.</em></p>
+  {% endif %}
   <h2>Workbook details</h2>
   <p><strong>Sheets:</strong></p>
   <ul>
@@ -28,6 +38,8 @@
    <p>Sum of column 2: <strong>{{ col2_sum }}</strong></p>
   <br>
   <br> -->
+  <!--<h2>AI’s Answer</h2>
+  <p>{{ ai_answer }}</p>-->
   <a href = "/">Another One</a>
 </body>
 </html>
