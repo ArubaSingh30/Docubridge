@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>DocuBridge AI Model Assistant</title>
+  <meta charset="UTF-8">
+  <title>Upload a Spreadsheet</title>
 </head>
 <body>
-  <h1>DocuBridge Financial Model Assistant</h1>
-<form method = "POST" action="/upload" enctype="multipart/form-data">
-  <p>Upload a financial model and ask questions about it.</p>
-  <input type="file" id="myFile" name="excelFile" accept=".xlsx,.xls" required>
-  <br><br>
-  <label for="userQuestion">Your question:</label><br>
-  <textarea id="userQuestion" name="userQuestion" rows="5" cols="50" placeholder="Enter your question here..." required></textarea>
-  <br><br>
-  <br><br>
-  <input type="submit">
+  <h1>Upload your financial spreadsheet</h1>
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="excelFile" accept=".xlsx,.xls" required><br><br>
+    <textarea name="userQuestion" rows="4" cols="50"
+              placeholder="Ask your question…" required></textarea><br><br>
+    <button type="submit">Upload & Ask</button>
+  </form>
 </body>
 </html>
