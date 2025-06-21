@@ -23,16 +23,8 @@
         <p>{{ ai_answer }}</p>
       </div>
     </div>
-  {% else %}
-    <p><em>No answer generated.</em></p>
   {% endif %}
-  <h2>Workbook details</h2>
-  <p><strong>Sheets:</strong></p>
-  <ul>
-    {% for name in sheets %}
-      <li>{{ name }}</li>
-    {% endfor %}
-  </ul>
+     
 
   <!-- <h2>Simple statistic</h2>
    <p>Sum of column 2: <strong>{{ col2_sum }}</strong></p>
