@@ -1,23 +1,310 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>DocuBridge AI Model Assistant</title>
-</head>
-<body>
-  <h1>DocuBridge Financial Model Assistant</h1>
-<form method = "POST" action="/upload" enctype="multipart/form-data">
-  <p>Upload a financial model and ask questions about it.</p>
-  <input type="file" id="myFile" name="excelFile" accept=".xlsx,.xls" required>
-  <br><br>
-  <label for="userQuestion">Your question:</label><br>
-  <textarea id="userQuestion" name="userQuestion" rows="5" cols="50" placeholder="Enter your question here..." required></textarea>
-  <br><br>
-  <br><br>
-  <input type="submit">
-</form>
-  <!-- Placeholder for future Q&A -->
-  <div style="border: 1px dashed gray; padding: 10px; margin-top: 20px;">
-    <em>Q&A interface coming soon...</em>
-  </div>
-</body>
-</html>
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>AI Financial Analyst</title>
+                    <style>
+                        /* --- General Styling --- */
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                            background-color: #f4f4f9;
+                            color: #333;
+                            margin: 0;
+                            padding: 20px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: flex-start;
+                            min-height: 100vh;
+                        }
+
+                        /* --- Main Container --- */
+                        .container {
+                            width: 100%;
+                            max-width: 800px;
+                            background-color: #ffffff;
+                            padding: 30px 40px;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                        }
+
+                        h1 {
+                            color: #1a237e;
+                            text-align: center;
+                            margin-bottom: 10px;
+                        }
+
+                        .instructions {
+                            text-align: center;
+                            font-size: 1.1em;
+                            color: #555;
+                            margin-bottom: 30px;
+                            line-height: 1.6;
+                        }
+
+                        /* --- Form Layout --- */
+                        #uploadForm {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 20px;
+                        }
+
+                        .form-row {
+                            display: flex;
+                            gap: 30px;
+                        }
+
+                        .form-group {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                        }
+
+                        label {
+                            font-weight: bold;
+                            font-size: 0.9em;
+                            margin-bottom: 8px;
+                            color: #333;
+                        }
+
+                        /* --- Drag-and-Drop File Area --- */
+                        .file-drop-area {
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 100%;
+                            min-height: 120px;
+                            padding: 20px;
+                            border: 3px dashed #ccc;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            transition: border-color 0.3s, background-color 0.3s;
+                            text-align: center;
+                            color: #777;
+                            box-sizing: border-box;
+                        }
+
+                        .file-drop-area:hover,
+                        .file-drop-area.drag-over {
+                            border-color: #3f51b5;
+                            background-color: #f0f2ff;
+                        }
+
+                        .file-drop-area input[type="file"] {
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            top: 0;
+                            left: 0;
+                            opacity: 0;
+                            cursor: pointer;
+                        }
+
+                        .file-info {
+                            font-style: italic;
+                        }
+
+                        /* --- MODIFIED: Error Message Styling --- */
+                        .error-message {
+                            color: #d32f2f; /* Red color for errors */
+                            font-size: 0.9em;
+                            margin-top: 8px;
+                            font-weight: 500;
+                            visibility: hidden; /* Hide the element but keep its space */
+                            min-height: 1.2em;  /* Reserve space for one line of text */
+                        }
+
+                        textarea {
+                            width: 100%;
+                            padding: 12px;
+                            border: 1px solid #ccc;
+                            border-radius: 6px;
+                            font-size: 1em;
+                            box-sizing: border-box;
+                            transition: border-color 0.3s;
+                            resize: vertical;
+                            min-height: 120px;
+                        }
+
+                        textarea:hover,
+                        textarea:focus {
+                            border-color: #3f51b5;
+                            outline: none;
+                        }
+
+                        /* --- Submit Button --- */
+                        button[type="submit"] {
+                            background-color: #3f51b5;
+                            color: white;
+                            padding: 15px 20px;
+                            border: none;
+                            border-radius: 6px;
+                            font-size: 1.1em;
+                            font-weight: bold;
+                            cursor: pointer;
+                            transition: background-color 0.3s;
+                        }
+
+                        button[type="submit"]:hover {
+                            background-color: #303f9f;
+                        }
+
+                        button[type="submit"]:disabled {
+                            background-color: #9fa8da;
+                            cursor: not-allowed;
+                        }
+
+                        /* --- Loading Indicator & Result Display --- */
+                        .loader {
+                            display: none;
+                            text-align: center;
+                            font-size: 1.1em;
+                            color: #3f51b5;
+                            font-style: italic;
+                            margin-top: 20px;
+                        }
+
+                        .result-container {
+                            margin-top: 40px;
+                        }
+
+                        .result-box {
+                            background-color: #e8eaf6;
+                            border-left: 5px solid #3f51b5;
+                            padding: 20px;
+                            margin-bottom: 20px;
+                            border-radius: 0 6px 6px 0;
+                        }
+
+                        .result-box p { margin: 0 0 10px 0; line-height: 1.6; }
+                        .result-box p:last-child { margin-bottom: 0; }
+
+                        @media (max-width: 768px) {
+                            .form-row { flex-direction: column; }
+                            .container { padding: 20px; }
+                        }
+                    </style>
+                </head>
+                <body>
+
+                <div class="container">
+                    <h1>AI Financial Analyst</h1>
+                    <p class="instructions">
+                        Upload an Excel financial model and ask a question. The AI will analyze the data and respond.
+                    </p>
+
+                    <!-- Upload Form -->
+                    <form id="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">
+                        <div class="form-row">
+                            <!-- Left Column: File Drop Area -->
+                            <div class="form-group">
+                                <label for="excelFile">Upload a file (.xls, .xlsx):</label>
+                                <div class="file-drop-area">
+                                    <span class="file-msg">Choose a file or drag it here</span>
+                                    <span class="file-info" style="display: none;"></span>
+                                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls" required>
+                                </div>
+                                <div id="fileError" class="error-message"></div>
+                            </div>
+
+                            <!-- Right Column: Question Box -->
+                            <div class="form-group">
+                                <label for="userQuestion">Ask a Question:</label>
+                                <textarea id="userQuestion" name="userQuestion" placeholder="e.g., What are the total revenues in 2022?" required></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit">Upload & Ask</button>
+                    </form>
+
+                    <!-- Loading indicator, hidden by default -->
+                    <div id="loader" class="loader">
+                        Analyzing your data, please wait…
+                    </div>
+
+                    <!-- Container for AI's response -->
+                    <div class="result-container">
+                        {% if result %}
+                        <div class="result-box">
+                            <p><strong>Your Question:</strong> {{ result.question }}</p>
+                            <p><strong>AI's Answer:</strong> {{ result.answer }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <script>
+                    const fileDropArea = document.querySelector('.file-drop-area');
+                    const fileInput = document.getElementById('excelFile');
+                    const fileMsg = fileDropArea.querySelector('.file-msg');
+                    const fileInfo = fileDropArea.querySelector('.file-info');
+                    const fileError = document.getElementById('fileError');
+
+                    // Drag and drop event listeners
+                    fileDropArea.addEventListener('dragover', (event) => {
+                        event.preventDefault();
+                        fileDropArea.classList.add('drag-over');
+                    });
+
+                    fileDropArea.addEventListener('dragleave', () => {
+                        fileDropArea.classList.remove('drag-over');
+                    });
+
+                    fileDropArea.addEventListener('drop', (event) => {
+                        event.preventDefault();
+                        fileDropArea.classList.remove('drag-over');
+                        if (event.dataTransfer.files.length > 0) {
+                            fileInput.files = event.dataTransfer.files;
+                            fileInput.dispatchEvent(new Event('change'));
+                        }
+                    });
+
+                    // Update UI on file selection
+                    fileInput.addEventListener('change', () => {
+                        // MODIFIED: Hide the error message by changing visibility
+                        fileError.style.visibility = 'hidden';
+
+                        if (fileInput.files.length > 0) {
+                            fileMsg.style.display = 'none';
+                            fileInfo.textContent = `Selected file: ${fileInput.files[0].name}`;
+                            fileInfo.style.display = 'block';
+                        } else {
+                            fileMsg.style.display = 'block';
+                            fileInfo.style.display = 'none';
+                        }
+                    });
+
+                    // Form submission listener with validation
+                    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+
+                        const allowedExtensions = ['.xlsx', '.xls'];
+                        if (fileInput.files.length === 0) {
+                            return; 
+                        }
+
+                        const fileName = fileInput.files[0].name;
+                        const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+                        if (!allowedExtensions.includes(fileExtension)) {
+                            event.preventDefault();
+
+                            // MODIFIED: Show the error message by changing visibility
+                            fileError.textContent = 'Invalid file format. Please upload a .xlsx or .xls file.';
+                            fileError.style.visibility = 'visible';
+
+                            return;
+                        }
+
+                        // If validation passes, continue
+                        const submitButton = this.querySelector('button[type="submit"]');
+                        const loader = document.getElementById('loader');
+
+                        loader.style.display = 'block';
+                        submitButton.disabled = true;
+                        submitButton.textContent = 'Analyzing...';
+                    });
+                </script>
+
+                </body>
+                </html>

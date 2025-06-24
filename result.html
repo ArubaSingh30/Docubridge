@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" sizes="192x192" href="/path/to/icon.png">
+</head>
+<body>
+  <section>
+    <h1>You uploaded everything successfully!</h1>
+  </section>
+  <p>File “{{ filename }}” uploaded successfully. </p>
+  <p>Question: {{ question }}</p>
+  <h2>Preview of your data</h2>
+  <div>
+    {{ table_html | safe }}
+  </div>
+  <h2>AI’s Answer</h2>
+  {% if ai_answer %}
+    <div class="card" style="margin-bottom:1em;">
+      <div class="card-body">
+        <p>{{ ai_answer }}</p>
+      </div>
+    </div>
+  {% endif %}
+     
+
+  <!-- <h2>Simple statistic</h2>
+   <p>Sum of column 2: <strong>{{ col2_sum }}</strong></p>
+  <br>
+  <br> -->
+  <!--<h2>AI’s Answer</h2>
+  <p>{{ ai_answer }}</p>-->
+  <a href = "/">Another One</a>
+</body>
+</html>
