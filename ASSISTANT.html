@@ -17,6 +17,20 @@
     {% endif %}
   </p>
 
+  <!-- sheet‐picker form -->
+  <form id="sheetSelectForm" method="POST" action="/switch-sheet">
+    <label for="sheetName">Choose sheet:</label>
+    <select name="sheetName" id="sheetName"
+            onchange="this.form.submit()">
+      {% for name in sheet_names %}
+        <option value="{{ name }}"
+          {% if name == active_sheet %} selected {% endif %}>
+          {{ name }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+  
   <div class="mb-4">
     <h2>Data Preview</h2>
     {{ table_html | safe }}
@@ -26,7 +40,18 @@
     <h2>AI’s Answer</h2>
     <div class="card mb-4">
       <div class="card-body">
-        {{ ai_html | safe }}
+        <!-- MODIFICATION: Display the question from the result object for context. -->
+        {% if result and result.question %}
+            <p class="card-text"><strong>Your Question:</strong> {{ result.question }}</p>
+            <hr>
+        {% endif %}
+        
+        <!-- FIX: Changed ai_html to result.answer to correctly display the AI's response. -->
+        {% if result and result.answer %}
+            {{ result.answer | safe }}
+        {% else %}
+            <p class="text-muted">The AI did not provide an answer.</p>
+        {% endif %}
       </div>
     </div>
   </div>
